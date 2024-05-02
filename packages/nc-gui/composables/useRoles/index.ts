@@ -143,6 +143,7 @@ export const useRoles = createSharedComposable(() => {
       checkRoles = extractRolesObj(roles)
     }
 
+    return Object.entries(checkRoles).some(([role, hasRole]) =>
       hasPermission(role as Exclude<Roles, WorkspaceUserRoles>, hasRole, permission),
     )
   }

@@ -1348,7 +1348,7 @@ export class MysqlUi {
     if (
       abstractType1 &&
       abstractType1 === abstractType2 &&
-      ['integer', 'flot'].includes(abstractType1)
+      ['integer', 'float'].includes(abstractType1)
     )
       return true;
 
