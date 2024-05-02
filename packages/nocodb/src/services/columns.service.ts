@@ -2362,7 +2362,7 @@ export class ColumnsService {
       .then((m) => m.getColumns(ncMeta));
     const relType = relationColOpt.type === 'bt' ? 'hm' : 'bt';
     for (const c of columnsInRelatedTable) {
-      if (c.uidt !== UITypes.LinkToAnotherRecord) continue;
+      if (!isLinksOrLTAR(c.uidt)) continue;
       const colOpt = await c.getColOptions<LinkToAnotherRecordColumn>(ncMeta);
       if (
         colOpt.fk_parent_column_id === parentColumn.id &&
