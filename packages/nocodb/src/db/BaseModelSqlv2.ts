@@ -1889,9 +1889,16 @@ class BaseModelSqlv2 {
     ).getModel();
     const cn = (await relColOptions.getChildColumn()).column_name;
     const childTable = await (await relColOptions.getChildColumn()).getModel();
-
-    const childTn = this.getTnPath(childTable);
-    const parentTn = this.getTnPath(parentTable);
+    const parentBaseModel = await Model.getBaseModelSQL({
+      dbDriver: this.dbDriver,
+      model: parentTable,
+    });
+    const childBaseModel = await Model.getBaseModelSQL({
+      dbDriver: this.dbDriver,
+      model: childTable,
+    });
+    const childTn = childBaseModel.getTnPath(childTable);
+    const parentTn = parentBaseModel.getTnPath(parentTable);
 
     const rtn = parentTn;
     const tn = childTn;
@@ -2011,17 +2018,17 @@ class BaseModelSqlv2 {
     ).getModel();
     const cn = (await relColOptions.getChildColumn()).column_name;
     const childTable = await (await relColOptions.getChildColumn()).getModel();
-    const parentModel = await Model.getBaseModelSQL({
+    const parentBaseModel = await Model.getBaseModelSQL({
       dbDriver: this.dbDriver,
       model: parentTable,
     });
-    const childModel = await Model.getBaseModelSQL({
+    const childBaseModel = await Model.getBaseModelSQL({
       dbDriver: this.dbDriver,
       model: childTable,
     });
 
-    const rtn = this.getTnPath(parentTable);
-    const tn = this.getTnPath(childTable);
+    const rtn = parentBaseModel.getTnPath(parentTable);
+    const tn = childBaseModel.getTnPath(childTable);
     await childTable.getColumns();
 
     // one-to-one relation is combination of both hm and bt to identify table which have
@@ -2042,7 +2049,7 @@ class BaseModelSqlv2 {
       await this.shuffle({ qb });
     }
 
-    await (isBt ? parentModel : childModel).selectObject({ qb });
+    await (isBt ? parentBaseModel : childBaseModel).selectObject({ qb });
 
     const aliasColObjMap = await parentTable.getAliasColObjMap();
     const filterObj = extractFilterFromXwhere(where, aliasColObjMap);
@@ -2060,7 +2067,7 @@ class BaseModelSqlv2 {
 
     applyPaginate(qb, rest);
 
-    const proto = await (isBt ? parentModel : childModel).getProto();
+    const proto = await (isBt ? parentBaseModel : childBaseModel).getProto();
     const data = await this.execAndParse(
       qb,
       await (isBt ? parentTable : childTable).getColumns(),
