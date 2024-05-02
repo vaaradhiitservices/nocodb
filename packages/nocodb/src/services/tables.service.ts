@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import DOMPurify from 'isomorphic-dompurify';
 import {
   AppEvents,
@@ -11,28 +11,28 @@ import {
   RelationTypes,
   UITypes,
 } from 'nocodb-sdk';
-import { MetaDiffsService } from './meta-diffs.service';
-import { ColumnsService } from './columns.service';
+import {MetaDiffsService} from './meta-diffs.service';
+import {ColumnsService} from './columns.service';
 import type {
   ColumnType,
   NormalColumnRequestType,
   TableReqType,
   UserType,
 } from 'nocodb-sdk';
-import type { MetaService } from '~/meta/meta.service';
-import type { LinkToAnotherRecordColumn, User, View } from '~/models';
-import type { NcRequest } from '~/interface/config';
-import { Base, Column, Model, ModelRoleVisibility } from '~/models';
-import { AppHooksService } from '~/services/app-hooks/app-hooks.service';
+import type {MetaService} from '~/meta/meta.service';
+import type {LinkToAnotherRecordColumn, User, View} from '~/models';
+import type {NcRequest} from '~/interface/config';
+import {Base, Column, Model, ModelRoleVisibility} from '~/models';
+import {AppHooksService} from '~/services/app-hooks/app-hooks.service';
 import ProjectMgrv2 from '~/db/sql-mgr/v2/ProjectMgrv2';
-import { NcError } from '~/helpers/catchError';
+import {NcError} from '~/helpers/catchError';
 import getColumnPropsFromUIDT from '~/helpers/getColumnPropsFromUIDT';
 import getColumnUiType from '~/helpers/getColumnUiType';
-import getTableNameAlias, { getColumnNameAlias } from '~/helpers/getTableName';
+import getTableNameAlias, {getColumnNameAlias} from '~/helpers/getTableName';
 import mapDefaultDisplayValue from '~/helpers/mapDefaultDisplayValue';
 import Noco from '~/Noco';
 import NcConnectionMgrv2 from '~/utils/common/NcConnectionMgrv2';
-import { sanitizeColumnName, validatePayload } from '~/helpers';
+import {sanitizeColumnName, validatePayload} from '~/helpers';
 import {
   getUniqueColumnAliasName,
   getUniqueColumnName,
@@ -44,7 +44,8 @@ export class TablesService {
     protected readonly metaDiffService: MetaDiffsService,
     protected readonly appHooksService: AppHooksService,
     protected readonly columnsService: ColumnsService,
-  ) {}
+  ) {
+  }
 
   async tableUpdate(param: {
     tableId: any;
@@ -176,7 +177,7 @@ export class TablesService {
     forceDeleteRelations?: boolean;
     req?: any;
   }) {
-    const table = await Model.getByIdOrName({ id: param.tableId });
+    const table = await Model.getByIdOrName({id: param.tableId});
     await table.getColumns();
 
     if (table.mm) {
@@ -197,9 +198,9 @@ export class TablesService {
               return (
                 isLinksOrLTAR(c) &&
                 (c.colOptions as LinkToAnotherRecordColumn).type ===
-                  RelationTypes.MANY_TO_MANY &&
+                RelationTypes.MANY_TO_MANY &&
                 (c.colOptions as LinkToAnotherRecordColumn).fk_mm_model_id ===
-                  table.id
+                table.id
               );
             });
           });
@@ -209,6 +210,19 @@ export class TablesService {
       NcError.badRequest(
         `This is a many to many table for ${tables[0]?.title} (${relColumns[0]?.title}) & ${tables[1]?.title} (${relColumns[1]?.title}). You can disable "Show M2M tables" in base settings to avoid seeing this.`,
       );
+    }
+
+    // if table is using in custom relation as junction table then delete all the relation
+    const relations = await Noco.ncMeta.metaList2(null, null, MetaTable.COL_RELATIONS, {
+      condition: {
+        fk_mm_model_id: table.id,
+      },
+    });
+
+    if (relations?.data?.list?.length) {
+      for (const relation of relations.data.list) {
+        await Column.delete(relation.fk_column_id);
+      }
     }
 
     const base = await Base.getWithInfo(table.base_id);
@@ -246,7 +260,7 @@ export class TablesService {
         }
 
         // verify column exist or not and based on that delete the column
-        if (!(await Column.get({ colId: c.id }, ncMeta))) {
+        if (!(await Column.get({colId: c.id}, ncMeta))) {
           continue;
         }
 
@@ -336,7 +350,7 @@ export class TablesService {
       'guest',
     ];
 
-    const defaultDisabled = roles.reduce((o, r) => ({ ...o, [r]: false }), {});
+    const defaultDisabled = roles.reduce((o, r) => ({...o, [r]: false}), {});
 
     let models =
       _models ||
@@ -360,7 +374,7 @@ export class TablesService {
           _tn: view.title,
           table_meta: model.meta,
           ...view,
-          disabled: { ...defaultDisabled },
+          disabled: {...defaultDisabled},
         };
       }
 
@@ -477,7 +491,7 @@ export class TablesService {
 
         if (!col || !col.system) {
           tableCreatePayLoad.columns.push({
-            ...(await getColumnPropsFromUIDT({ uidt } as any, source)),
+            ...(await getColumnPropsFromUIDT({uidt} as any, source)),
             column_name: colName,
             cn: colName,
             title: colAlias,
@@ -655,9 +669,9 @@ export class TablesService {
 
     let columns: Array<
       Omit<Column, 'column_name' | 'title'> & {
-        cn: string;
-        system?: boolean;
-      }
+      cn: string;
+      system?: boolean;
+    }
     >;
 
     if (!source.isMeta()) {
