@@ -1175,7 +1175,6 @@ class BaseModelSqlv2 {
       });
       await parentTable.getColumns();
 
-
       const childTn = childBaseModel.getTnPath(childTable);
       const parentTn = this.getTnPath(parentTable);
 
@@ -4643,7 +4642,6 @@ class BaseModelSqlv2 {
       dbDriver: this.dbDriver,
     });
 
-
     const childBaseModel = await Model.getBaseModelSQL({
       dbDriver: this.dbDriver,
       model: childTable,
@@ -4673,12 +4671,14 @@ class BaseModelSqlv2 {
           const vTn = assocBaseModel.getTnPath(vTable);
 
           if (this.isSnowflake || this.isDatabricks) {
-            const parentPK = parentBaseModel.dbDriver(parentTn)
+            const parentPK = parentBaseModel
+              .dbDriver(parentTn)
               .select(parentColumn.column_name)
               .where(_wherePk(parentTable.primaryKeys, childId))
               .first();
 
-            const childPK = childBaseModel.dbDriver(childTn)
+            const childPK = childBaseModel
+              .dbDriver(childTn)
               .select(childColumn.column_name)
               .where(_wherePk(childTable.primaryKeys, rowId))
               .first();
@@ -5853,8 +5853,18 @@ class BaseModelSqlv2 {
     await childTable.getColumns();
     await parentTable.getColumns();
 
-    const childTn = this.getTnPath(childTable);
-    const parentTn = this.getTnPath(parentTable);
+    const childBaseModel = await Model.getBaseModelSQL({
+      model: childTable,
+      dbDriver: this.dbDriver,
+    });
+
+    const parentBaseModel = await Model.getBaseModelSQL({
+      model: childTable,
+      dbDriver: this.dbDriver,
+    });
+
+    const childTn = childBaseModel.getTnPath(childTable);
+    const parentTn = parentBaseModel.getTnPath(parentTable);
 
     let relationType = colOptions.type;
     let childIds = _childIds;
@@ -5895,7 +5905,12 @@ class BaseModelSqlv2 {
           const vParentCol = await colOptions.getMMParentColumn();
           const vTable = await colOptions.getMMModel();
 
-          const vTn = this.getTnPath(vTable);
+          const assocBaseModel = await Model.getBaseModelSQL({
+            model: vTable,
+            dbDriver: this.dbDriver,
+          });
+
+          const vTn = assocBaseModel.getTnPath(vTable);
 
           let insertData: Record<string, any>[];
 
@@ -6158,8 +6173,18 @@ class BaseModelSqlv2 {
     await childTable.getColumns();
     await parentTable.getColumns();
 
-    const childTn = this.getTnPath(childTable);
-    const parentTn = this.getTnPath(parentTable);
+    const childBaseModel = await Model.getBaseModelSQL({
+      model: childTable,
+      dbDriver: this.dbDriver,
+    });
+
+    const parentBaseModel = await Model.getBaseModelSQL({
+      model: childTable,
+      dbDriver: this.dbDriver,
+    });
+
+    const childTn = childBaseModel.getTnPath(childTable);
+    const parentTn = parentBaseModel.getTnPath(parentTable);
 
     switch (colOptions.type) {
       case RelationTypes.MANY_TO_MANY:
@@ -6167,6 +6192,11 @@ class BaseModelSqlv2 {
           const vChildCol = await colOptions.getMMChildColumn();
           const vParentCol = await colOptions.getMMParentColumn();
           const vTable = await colOptions.getMMModel();
+
+          const assocBaseModel = await Model.getBaseModelSQL({
+            model: vTable,
+            dbDriver: this.dbDriver,
+          });
 
           // validate Ids
           {
@@ -6222,7 +6252,7 @@ class BaseModelSqlv2 {
             }
           }
 
-          const vTn = this.getTnPath(vTable);
+          const vTn = assocBaseModel.getTnPath(vTable);
 
           const delQb = this.dbDriver(vTn)
             .where({
@@ -6482,7 +6512,7 @@ class BaseModelSqlv2 {
     cookie?: { user?: any };
     model?: Model;
     knex?: XKnex;
-    baseModel?: BaseModelSqlv2
+    baseModel?: BaseModelSqlv2;
   }) {
     const columns = await model.getColumns();
 
