@@ -2314,48 +2314,44 @@ export class ColumnsService {
     },
     ignoreFkDelete = false,
   ) => {
-    if (childTable) {
-      if (!custom) {
-        let foreignKeyName;
+    if (childTable && !custom) {
+      let foreignKeyName;
 
-        // if relationColOpt is not provided, extract it from child table
-        // and get the foreign key name for dropping the foreign key
-        if (!relationColOpt) {
-          foreignKeyName = (
-            (
-              await childTable.getColumns(ncMeta).then(async (cols) => {
-                for (const col of cols) {
-                  if (col.uidt === UITypes.LinkToAnotherRecord) {
-                    const colOptions =
-                      await col.getColOptions<LinkToAnotherRecordColumn>(
-                        ncMeta,
-                      );
-                    if (colOptions.fk_related_model_id === parentTable.id) {
-                      return { colOptions };
-                    }
+      // if relationColOpt is not provided, extract it from child table
+      // and get the foreign key name for dropping the foreign key
+      if (!relationColOpt) {
+        foreignKeyName = (
+          (
+            await childTable.getColumns(ncMeta).then(async (cols) => {
+              for (const col of cols) {
+                if (col.uidt === UITypes.LinkToAnotherRecord) {
+                  const colOptions =
+                    await col.getColOptions<LinkToAnotherRecordColumn>(ncMeta);
+                  if (colOptions.fk_related_model_id === parentTable.id) {
+                    return { colOptions };
                   }
                 }
-              })
-            )?.colOptions as LinkToAnotherRecordType
-          ).fk_index_name;
-        } else {
-          foreignKeyName = relationColOpt.fk_index_name;
-        }
+              }
+            })
+          )?.colOptions as LinkToAnotherRecordType
+        ).fk_index_name;
+      } else {
+        foreignKeyName = relationColOpt.fk_index_name;
+      }
 
-        if (!relationColOpt?.virtual && !virtual) {
-          // Ensure relation deletion is not attempted for virtual relations
-          try {
-            // Attempt to delete the foreign key constraint from the database
-            await sqlMgr.sqlOpPlus(source, 'relationDelete', {
-              childColumn: childColumn.column_name,
-              childTable: childTable.table_name,
-              parentTable: parentTable.table_name,
-              parentColumn: parentColumn.column_name,
-              foreignKeyName,
-            });
-          } catch (e) {
-            console.log(e.message);
-          }
+      if (!relationColOpt?.virtual && !virtual) {
+        // Ensure relation deletion is not attempted for virtual relations
+        try {
+          // Attempt to delete the foreign key constraint from the database
+          await sqlMgr.sqlOpPlus(source, 'relationDelete', {
+            childColumn: childColumn.column_name,
+            childTable: childTable.table_name,
+            parentTable: parentTable.table_name,
+            parentColumn: parentColumn.column_name,
+            foreignKeyName,
+          });
+        } catch (e) {
+          console.log(e.message);
         }
       }
     }
