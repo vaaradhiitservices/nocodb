@@ -2435,9 +2435,9 @@ export class ColumnsService {
       };
 
       await sqlMgr.sqlOpPlus(source, 'tableUpdate', tableUpdateBody);
+      // delete foreign key column
+      await Column.delete(childColumn.id, ncMeta);
     }
-    // delete foreign key column
-    await Column.delete(childColumn.id, ncMeta);
   };
 
   deleteOoRelation = async (
@@ -2588,9 +2588,9 @@ export class ColumnsService {
       };
 
       await sqlMgr.sqlOpPlus(source, 'tableUpdate', tableUpdateBody);
+      // delete foreign key column
+      await Column.delete(childColumn.id, ncMeta);
     }
-    // delete foreign key column
-    await Column.delete(childColumn.id, ncMeta);
   };
 
   async createLTARColumn(param: {
