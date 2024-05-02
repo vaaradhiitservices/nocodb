@@ -56,6 +56,8 @@ const isLinks = computed(() => vModel.value.uidt === UITypes.Links && vModel.val
 
 const oneToOneEnabled = ref(false)
 
+const isAdvancedOptionsShownEasterEgg = ref(false)
+
 const cusValidators = {
   'custom.column_id': [{ required: true, message: t('general.required') }],
   'custom.ref_model_id': [{ required: true, message: t('general.required') }],
@@ -80,10 +82,18 @@ const onCustomSwitchToggle = () => {
       childId: [{ required: true, message: t('general.required') }],
     })
 }
+
+const handleShowAdvanceOptions = () => {
+  isAdvancedOptionsShownEasterEgg.value = !isAdvancedOptionsShownEasterEgg.value
+
+  if (!isAdvancedOptionsShownEasterEgg.value) {
+    vModel.value.is_custom_link = false
+  }
+}
 </script>
 
 <template>
-  <div class="w-full flex flex-col mb-2 mt-2">
+  <div class="w-full flex flex-col mb-2 mt-1">
     <div class="mb-2">Relation Type <span class="text-red-500">*</span></div>
     <div class="border-1 border-gray-200 rounded-lg">
       <a-form-item v-bind="validateInfos.type" class="nc-ltar-relation-type">
@@ -104,7 +114,7 @@ const onCustomSwitchToggle = () => {
             {{ $t('title.hasMany') }}</a-radio
           >
 
-          <a-radio v-if="oneToOneEnabled" value="oo">
+          <a-radio v-if="oneToOneEnabled" value="oo" @dblclick="handleShowAdvanceOptions">
             <span class="nc-ltar-icon nc-oo-icon">
               <GeneralIcon icon="oneToOneSolid" class="text-white" />
             </span>
@@ -113,11 +123,16 @@ const onCustomSwitchToggle = () => {
         </a-radio-group>
       </a-form-item>
     </div>
-    <div class="mt-4">
+    <div v-if="isAdvancedOptionsShownEasterEgg" class="mt-4">
       <a-switch v-model:checked="vModel.is_custom_link" size="small" name="Custom" @change="onCustomSwitchToggle" />
       <span class="ml-3">Advanced Link</span>
     </div>
-    <div class="mt-3">
+    <div
+      :class="{
+        'mt-3': isAdvancedOptionsShownEasterEgg,
+        'mt-4': !isAdvancedOptionsShownEasterEgg,
+      }"
+    >
       <LazySmartsheetColumnLinkAdvancedOptions v-if="vModel.is_custom_link" v-model:value="vModel" />
       <template v-else>
         <a-form-item class="flex w-full pb-2 nc-ltar-child-table" v-bind="validateInfos['childId']">
