@@ -84,27 +84,29 @@ const onCustomSwitchToggle = () => {
 
 <template>
   <div class="w-full flex flex-col mb-2 mt-4">
-    <div class="pb-2">
+    <div class="mb-2">
+      Relation Type <span class="text-red-500">*</span>
       <a-switch v-model:checked="vModel.is_custom_link" size="small" name="Custom" @change="onCustomSwitchToggle" /> Custom
     </div>
-    <div class="border-2 p-6">
+    <div class="border-1 border-gray-200 rounded-lg">
       <a-form-item v-bind="validateInfos.type" class="nc-ltar-relation-type">
         <a-radio-group
           v-model:value="vModel.type"
           name="type"
           v-bind="validateInfos.type"
-          class="nc-ltar-relation-type-radio-group !flex flex-col gap-2"
+          class="nc-ltar-relation-type-radio-group !flex flex-col"
         >
-          <a-radio value="hm" @dblclick="oneToOneEnabled = !oneToOneEnabled">
-            <span class="nc-ltar-icon nc-hm-icon"><GeneralIcon icon="hm" class="text-white" /></span>
-            {{ $t('title.hasMany') }}</a-radio
-          >
           <a-radio value="mm">
             <span class="nc-ltar-icon nc-mm-icon">
               <GeneralIcon icon="mm" class="text-white" />
             </span>
             {{ $t('title.manyToMany') }}</a-radio
           >
+          <a-radio value="hm" @dblclick="oneToOneEnabled = !oneToOneEnabled">
+            <span class="nc-ltar-icon nc-hm-icon"><GeneralIcon icon="hm" class="text-white" /></span>
+            {{ $t('title.hasMany') }}</a-radio
+          >
+
           <a-radio v-if="oneToOneEnabled" value="oo">
             <span class="nc-ltar-icon nc-oo-icon">
               <GeneralIcon icon="oneToOneSolid" class="text-white" />
@@ -113,18 +115,16 @@ const onCustomSwitchToggle = () => {
           >
         </a-radio-group>
       </a-form-item>
-
-      <LazySmartsheetColumnLinkAdvancedOptions v-if="vModel.is_custom_link" v-model:value="vModel" class="mt-2" />
+    </div>
+    <div class="mt-6">
+      <LazySmartsheetColumnLinkAdvancedOptions v-if="vModel.is_custom_link" v-model:value="vModel" />
       <template v-else>
-        <a-form-item
-          class="flex w-full pb-2 mt-4 nc-ltar-child-table"
-          :label="$t('labels.childTable')"
-          v-bind="validateInfos.childId"
-        >
+        <a-form-item class="flex w-full pb-2 nc-ltar-child-table" v-bind="validateInfos.childId">
           <a-select
             v-model:value="vModel.childId"
             show-search
             :filter-option="filterOption"
+            placeholder="-select child table-"
             dropdown-class-name="nc-dropdown-ltar-child-table"
             @change="onDataTypeChange"
           >
@@ -143,6 +143,7 @@ const onCustomSwitchToggle = () => {
         </a-form-item>
       </template>
     </div>
+
     <template v-if="!isXcdbBase || isLinks">
       <div
         class="text-xs cursor-pointer text-grey nc-more-options my-2 flex items-center gap-1 justify-end"
@@ -229,6 +230,14 @@ const onCustomSwitchToggle = () => {
       :deep(svg path) {
         @apply stroke-purple-50;
       }
+    }
+  }
+
+  :deep(.ant-radio-wrapper) {
+    @apply px-3 py-2 flex items-center mr-0;
+
+    &:not(:last-child) {
+      @apply border-b border-gray-200;
     }
   }
 
