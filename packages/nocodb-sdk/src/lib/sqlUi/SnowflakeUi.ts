@@ -706,7 +706,7 @@ export class SnowflakeUi {
     }
   }
 
-  static getDataTypeForUiType(col: { uidt: UITypes; }, idType?: IDType) {
+  static getDataTypeForUiType(col: { uidt: UITypes }, idType?: IDType) {
     const colProp: any = {};
     switch (col.uidt) {
       case 'ID':
@@ -846,7 +846,7 @@ export class SnowflakeUi {
     return colProp;
   }
 
-  static getDataTypeListForUiType(col: { uidt: UITypes; }, idType: IDType) {
+  static getDataTypeListForUiType(col: { uidt: UITypes }, idType: IDType) {
     switch (col.uidt) {
       case 'ID':
         if (idType === 'AG') {
@@ -1032,6 +1032,22 @@ export class SnowflakeUi {
       'COUNT',
       'DATESTR',
     ];
+  }
+
+  static isEqual(dataType1: string, dataType2: string) {
+    if (dataType1 === dataType2) return true;
+
+    const abstractType1 = this.getAbstractType({ dt: dataType1 });
+    const abstractType2 = this.getAbstractType({ dt: dataType2 });
+
+    if (
+      abstractType1 &&
+      abstractType1 === abstractType2 &&
+      ['integer', 'flot'].includes(abstractType1)
+    )
+      return true;
+
+    return false;
   }
 }
 
