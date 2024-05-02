@@ -5395,7 +5395,7 @@ class BaseModelSqlv2 {
               if (!btAlias) {
                 idToAliasPromiseMap[k] = Column.get({ colId: k }).then(
                   (col) => {
-                    return col.title;
+                    return col?.title;
                   },
                 );
               }
@@ -5407,7 +5407,7 @@ class BaseModelSqlv2 {
               idToAliasPromiseMap[col.id] = Column.get({
                 colId: col.id,
               }).then((col) => {
-                return col.title;
+                return col?.title;
               });
             }
           }
@@ -5444,7 +5444,7 @@ class BaseModelSqlv2 {
           delete item[key];
         }
       });
-    });
+    });k
 
     return data;
   }
