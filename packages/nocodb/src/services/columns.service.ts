@@ -2028,8 +2028,13 @@ export class ColumnsService {
         );
       });
       if (!link) {
-        link = await ncMeta.metaGet2(null, null, MetaTable.COL_RELATIONS, {
-          xcCondition: {
+        link = await ncMeta.metaGet2(
+          null,
+          null,
+          MetaTable.COL_RELATIONS,
+          {},
+          null,
+          {
             _or: [
               { fk_child_column_id: { eq: param.columnId } },
               { fk_parent_column_id: { eq: param.columnId } },
@@ -2037,7 +2042,7 @@ export class ColumnsService {
               { fk_mm_parent_column_id: { eq: param.columnId } },
             ],
           },
-        });
+        );
       }
 
       // if relation found then throw error
