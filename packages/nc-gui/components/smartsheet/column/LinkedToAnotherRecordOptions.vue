@@ -55,11 +55,53 @@ const filterOption = (value: string, option: { key: string }) => option.key.toLo
 const isLinks = computed(() => vModel.value.uidt === UITypes.Links && vModel.value.type !== RelationTypes.ONE_TO_ONE)
 
 const oneToOneEnabled = ref(false)
+
+
+const cusValidators = {
+  'custom.column_id': [
+    { required: true, message: t('general.required') }
+  ],
+  'custom.ref_model_id': [
+    { required: true, message: t('general.required') }
+  ],
+  'custom.ref_column_id': [
+    { required: true, message: t('general.required') }
+  ],
+}
+
+const cusJuncTableValidations = {
+  'custom.junc_model_id': [
+    { required: true, message: t('general.required') }
+  ],
+  'custom.junc_column_id': [
+    { required: true, message: t('general.required') }
+  ],
+  'custom.junc_ref_column_id': [
+    { required: true, message: t('general.required') }
+  ],
+}
+
+const onCustomSwitchToggle = () =>{
+  if(vModel.value?.is_custom_ltar)
+    setAdditionalValidations({
+      childId: [],
+      ...cusValidators,
+      ...(vModel.value.type === RelationTypes.MANY_TO_MANY ? cusJuncTableValidations : {})
+    })
+  else
+    setAdditionalValidations({
+      childId: [{ required: true, message: t('general.required') }],
+    })
+}
 </script>
 
 <template>
   <div class="w-full flex flex-col mb-2 mt-4">
+    <div class="pb-2">
+    <a-switch v-model:checked="vModel.is_custom_ltar" size="small" name="Custom" @change="onCustomSwitchToggle"/> Custom
+    </div>
     <div class="border-2 p-6">
+
       <a-form-item v-bind="validateInfos.type" class="nc-ltar-relation-type">
         <a-radio-group v-model:value="vModel.type" name="type" v-bind="validateInfos.type" class="!flex flex-col gap-2">
           <a-radio value="hm" @dblclick="oneToOneEnabled = !oneToOneEnabled">{{ $t('title.hasMany') }}</a-radio>
@@ -68,6 +110,8 @@ const oneToOneEnabled = ref(false)
         </a-radio-group>
       </a-form-item>
 
+      <LazySmartsheetColumnLinkAdvancedOptions v-if="vModel.is_custom_ltar" v-model:value="vModel" class="mt-2" />
+      <template v-else>
       <a-form-item
         class="flex w-full pb-2 mt-4 nc-ltar-child-table"
         :label="$t('labels.childTable')"
@@ -93,6 +137,7 @@ const oneToOneEnabled = ref(false)
           </a-select-option>
         </a-select>
       </a-form-item>
+      </template>
     </div>
     <template v-if="!isXcdbBase || isLinks">
       <div
