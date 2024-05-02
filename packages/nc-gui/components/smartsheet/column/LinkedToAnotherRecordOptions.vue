@@ -82,7 +82,7 @@ const cusJuncTableValidations = {
 }
 
 const onCustomSwitchToggle = () =>{
-  if(vModel.value?.is_custom_ltar)
+  if(vModel.value?.is_custom_link)
     setAdditionalValidations({
       childId: [],
       ...cusValidators,
@@ -98,7 +98,7 @@ const onCustomSwitchToggle = () =>{
 <template>
   <div class="w-full flex flex-col mb-2 mt-4">
     <div class="pb-2">
-    <a-switch v-model:checked="vModel.is_custom_ltar" size="small" name="Custom" @change="onCustomSwitchToggle"/> Custom
+    <a-switch v-model:checked="vModel.is_custom_link" size="small" name="Custom" @change="onCustomSwitchToggle"/> Custom
     </div>
     <div class="border-2 p-6">
 
@@ -110,7 +110,7 @@ const onCustomSwitchToggle = () =>{
         </a-radio-group>
       </a-form-item>
 
-      <LazySmartsheetColumnLinkAdvancedOptions v-if="vModel.is_custom_ltar" v-model:value="vModel" class="mt-2" />
+      <LazySmartsheetColumnLinkAdvancedOptions v-if="vModel.is_custom_link" v-model:value="vModel" class="mt-2" />
       <template v-else>
       <a-form-item
         class="flex w-full pb-2 mt-4 nc-ltar-child-table"
