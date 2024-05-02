@@ -112,7 +112,10 @@ export default async function generateLookupSelectQuery({
         await childModel.getColumns();
         const parentModel = await parentColumn.getModel();
         await parentModel.getColumns();
-        const parentBaseModel = await Model.getBaseModelSQL({ model: parentModel, dbDriver: knex });
+        const parentBaseModel = await Model.getBaseModelSQL({
+          model: parentModel,
+          dbDriver: knex,
+        });
 
         selectQb = knex(
           knex.raw(`?? as ??`, [
@@ -136,7 +139,10 @@ export default async function generateLookupSelectQuery({
         const parentModel = await parentColumn.getModel();
         await parentModel.getColumns();
 
-        const parentBaseModel = await Model.getBaseModelSQL({ model: parentModel, dbDriver: knex });
+        const parentBaseModel = await Model.getBaseModelSQL({
+          model: parentModel,
+          dbDriver: knex,
+        });
 
         selectQb = knex(
           knex.raw(`?? as ??`, [
@@ -151,7 +157,10 @@ export default async function generateLookupSelectQuery({
         const mmChildCol = await relation.getMMChildColumn();
         const mmParentCol = await relation.getMMParentColumn();
 
-        const associatedBaseModel = await Model.getBaseModelSQL({ model: mmModel, dbDriver: knex });
+        const associatedBaseModel = await Model.getBaseModelSQL({
+          model: mmModel,
+          dbDriver: knex,
+        });
 
         selectQb
           .innerJoin(
@@ -219,7 +228,10 @@ export default async function generateLookupSelectQuery({
         await childModel.getColumns();
         const parentModel = await parentColumn.getModel();
         await parentModel.getColumns();
-        const parentBaseModel = await Model.getBaseModelSQL({ model: parentModel, dbDriver: knex });
+        const parentBaseModel = await Model.getBaseModelSQL({
+          model: parentModel,
+          dbDriver: knex,
+        });
 
         selectQb.join(
           knex.raw(`?? as ??`, [
@@ -237,7 +249,10 @@ export default async function generateLookupSelectQuery({
         await childModel.getColumns();
         const parentModel = await parentColumn.getModel();
         await parentModel.getColumns();
-        const childBaseModel = await Model.getBaseModelSQL({ model: childModel, dbDriver: knex });
+        const childBaseModel = await Model.getBaseModelSQL({
+          model: childModel,
+          dbDriver: knex,
+        });
 
         selectQb.join(
           knex.raw(`?? as ??`, [
@@ -255,7 +270,10 @@ export default async function generateLookupSelectQuery({
         await childModel.getColumns();
         const parentModel = await parentColumn.getModel();
         await parentModel.getColumns();
-        const parentBaseModel = await Model.getBaseModelSQL({ model: parentModel, dbDriver: knex });
+        const parentBaseModel = await Model.getBaseModelSQL({
+          model: parentModel,
+          dbDriver: knex,
+        });
 
         const mmTableAlias = getAlias();
 
@@ -263,7 +281,10 @@ export default async function generateLookupSelectQuery({
         const mmChildCol = await relation.getMMChildColumn();
         const mmParentCol = await relation.getMMParentColumn();
 
-        const associatedBaseModel = await Model.getBaseModelSQL({ model: mmModel, dbDriver: knex });
+        const associatedBaseModel = await Model.getBaseModelSQL({
+          model: mmModel,
+          dbDriver: knex,
+        });
 
         selectQb
           .innerJoin(
