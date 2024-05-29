@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { UITypes } from 'nocodb-sdk';
+import { SqlUiFactory, UITypes } from 'nocodb-sdk';
 import Airtable from 'airtable';
 import hash from 'object-hash';
 import dayjs from 'dayjs';
@@ -512,14 +512,18 @@ export class AtImportProcessor {
         table.table_name = uniqueTableNameGen(sanitizedName);
 
         table.columns = [];
+
+        const source = await Source.get(syncDB.sourceId);
+
+        const sqlUi = SqlUiFactory.create({ client: source.type });
+
         const sysColumns = [
+          ...sqlUi.getNewTableColumns().filter((c) => c.column_name === 'id'),
           {
             title: ncSysFields.id,
             column_name: ncSysFields.id,
-            uidt: UITypes.ID,
-            meta: {
-              ag: 'nc',
-            },
+            uidt: UITypes.SingleLineText,
+            system: true,
           },
           {
             title: ncSysFields.hash,
@@ -528,6 +532,8 @@ export class AtImportProcessor {
             system: true,
           },
         ];
+
+        table.columns.push(...sysColumns);
 
         for (let j = 0; j < tblSchema[i].columns.length; j++) {
           const col = tblSchema[i].columns[j];
@@ -598,8 +604,6 @@ export class AtImportProcessor {
           }
           table.columns.push(ncCol);
         }
-        table.columns.push(sysColumns[0]);
-        table.columns.push(sysColumns[1]);
 
         tables.push(table);
       }
@@ -2536,7 +2540,6 @@ export class AtImportProcessor {
           data: { error: e.message },
         });
         logger.log(e);
-        throw new Error(e.message);
       }
       throw e;
     }
