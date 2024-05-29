@@ -498,6 +498,10 @@ const errorHelpers: {
     },
     code: 404,
   },
+  [NcErrorType.REQUIRED_FIELD_MISSING]: {
+    message: (field: string) => `Field '${field}' is required`,
+    code: 422,
+  },
   [NcErrorType.ERROR_DUPLICATE_RECORD]: {
     message: (...ids: string[]) => {
       const isMultiple = Array.isArray(ids) && ids.length > 1;
@@ -661,6 +665,13 @@ export class NcError {
   static recordNotFound(id: string | string[], args?: NcErrorArgs) {
     throw new NcBaseErrorv2(NcErrorType.RECORD_NOT_FOUND, {
       params: id,
+      ...args,
+    });
+  }
+
+  static requiredFieldMissing(field: string, args?: NcErrorArgs) {
+    throw new NcBaseErrorv2(NcErrorType.REQUIRED_FIELD_MISSING, {
+      params: field,
       ...args,
     });
   }
