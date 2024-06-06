@@ -225,6 +225,7 @@ export async function importData({
                       cookie: {},
                       skip_hooks: true,
                       foreign_key_checks: !!source.isMeta(),
+                      allowSystemColumn: true,
                     });
 
                     logBasic(
@@ -271,6 +272,7 @@ export async function importData({
               cookie: {},
               skip_hooks: true,
               foreign_key_checks: !!source.isMeta(),
+              allowSystemColumn: true,
             });
 
             logBasic(
@@ -441,6 +443,7 @@ export async function importLTARData({
                       cookie: {},
                       skip_hooks: true,
                       foreign_key_checks: !!source.isMeta(),
+                      allowSystemColumn: true,
                     });
 
                     insertArray = [];
@@ -484,6 +487,7 @@ export async function importLTARData({
               cookie: {},
               skip_hooks: true,
               foreign_key_checks: !!source.isMeta(),
+              allowSystemColumn: true,
             });
 
             importedCount += assocTableData[assocMeta.modelMeta.id].length;
