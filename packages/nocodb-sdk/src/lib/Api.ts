@@ -691,6 +691,10 @@ export interface FilterType {
   fk_parent_id?: StringOrNullType;
   /** Foreign Key to View */
   fk_view_id?: StringOrNullType;
+  /** Foreign Key to dynamic value Column */
+  fk_value_col_id?: StringOrNullType;
+  /** Foreign Key to Link Column */
+  fk_link_col_id?: StringOrNullType;
   /** Unique ID */
   id?: IdType;
   /** Is this filter grouped? */
@@ -1637,6 +1641,8 @@ export interface LicenseReqType {
  * Model for LinkToAnotherColumn Request
  */
 export interface LinkToAnotherColumnReqType {
+  /** Foreign Key to child view */
+  childViewId?: IdOrNullType;
   /** Foreign Key to chhild column */
   childId: IdType;
   /** Foreign Key to parent column */
@@ -1661,6 +1667,7 @@ export interface LinkToAnotherRecordType {
   /** Foreign Key to Column */
   fk_column_id?: IdType;
   fk_index_name?: string;
+  fk_relation_view_id?: string;
   fk_mm_child_column_id?: string;
   fk_mm_model_id?: string;
   fk_mm_parent_column_id?: string;
@@ -2457,6 +2464,11 @@ export type StringOrNullOrBooleanOrNumberType =
   | null
   | boolean
   | number;
+
+/**
+ * Model for IdOrNull
+ */
+export type IdOrNullType = IdType | null;
 
 /**
  * Model for Table

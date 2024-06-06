@@ -535,6 +535,11 @@ export class AtImportProcessor {
 
         table.columns.push(...sysColumns);
 
+        for (const sysCol of sysColumns) {
+          // call to avoid clash with system columns
+          nc_getSanitizedColumnName(sysCol.title, table.table_name);
+        }
+
         for (let j = 0; j < tblSchema[i].columns.length; j++) {
           const col = tblSchema[i].columns[j];
 
@@ -548,6 +553,10 @@ export class AtImportProcessor {
             col.name,
             table.table_name,
           );
+
+          // update col for mapping
+          col.name = ncName.title;
+
           const ncCol: any = {
             // Enable to use aTbl identifiers as is: id: col.id,
             title: ncName.title,
