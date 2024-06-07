@@ -780,6 +780,7 @@
     "signUpForFree": "Sign up for free"
   },
   "activity": {
+    "hideWeekends": "Hide weekends",
     "renameBase": "Rename Base",
     "renameWorkspace": "Rename workspace",
     "deactivate": "De-activate",
